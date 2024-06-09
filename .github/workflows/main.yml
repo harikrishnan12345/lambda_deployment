@@ -9,9 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
       - name: Checkout code
-        uses: actions//setup-node@v2
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
       - name: Install AWS CLI
         run: |
           sudo apt-get install -y python3-pip
@@ -19,7 +29,7 @@ jobs:
 
       - name: Deploy Lambda Function
         run: |
-          aws lambda update-function-code --function-name YOUR_FUNCTION_NAME --zip-file fileb://path/to/your/lambda/code.zip --region YOUR_AWS_REGION
+          aws lambda update-function-code --function-name YOUR_FUNCTION_NAME --zip-file fileb://path/to/your/lambda/code.zip --region eu-central-1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
